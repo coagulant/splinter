@@ -9,7 +9,7 @@ clean:
 
 doc_dependencies: sphinx
 
-dependencies: unittest2 argparse coverage selenium flask lxml zopetestbrowser
+dependencies: unittest2 argparse coverage selenium bottle lxml zopetestbrowser
 
 doc: doc_dependencies
 	@cd docs && make clean && make html
@@ -26,8 +26,8 @@ selenium:
 unittest2:
 	@python -c 'from unittest import skip' 2>/dev/null || pip install unittest2 --use-mirrors
 
-flask:
-	@python -c 'import flask' 2>/dev/null || pip install flask==0.7.2 --use-mirrors
+bottle:
+	@python -c 'import bottle' 2>/dev/null || pip install bottle --use-mirrors
 
 lxml:
 	@python -c 'import lxml' 2>/dev/null || pip install lxml==2.3.1 --use-mirrors
