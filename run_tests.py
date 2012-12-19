@@ -7,14 +7,13 @@
 # -*- coding: utf-8 -*-
 import argparse
 import sys
-
-try:
-    import unittest2 as unittest
-except ImportError, e:
-    import unittest
+import unittest
 
 from multiprocessing import Process
-from urllib import urlopen
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
 
 from tests import TESTS_ROOT
 from tests.fake_webapp import start_app, EXAMPLE_APP
@@ -79,7 +78,7 @@ def get_modules(modules_str):
             module = __import__(name, fromlist='tests')
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            print 'Error importing module %s:' % name
+            print('Error importing module %s:' % name)
             import traceback
             traceback.print_exception(exc_type, exc_value, exc_traceback,
                                       file=sys.stdout)
