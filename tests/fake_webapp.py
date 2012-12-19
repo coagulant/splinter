@@ -4,7 +4,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from flask import Flask, request, abort
+from bottle import abort, request, get, post, run, static_file
 from os import path
 
 
@@ -22,78 +22,80 @@ EXAMPLE_TYPE_HTML = read_static('type.html')
 EXAMPLE_POPUP_HTML = read_static('popup.html')
 EXAMPLE_NO_BODY_HTML = read_static('no-body.html')
 
-app = Flask(__name__)
 
-
-@app.route('/')
+@get('/')
 def index():
     return EXAMPLE_HTML
 
 
-@app.route('/iframe')
+@get('/iframe')
 def iframed():
     return EXAMPLE_IFRAME_HTML
 
 
-@app.route('/alert')
+@get('/alert')
 def alertd():
     return EXAMPLE_ALERT_HTML
 
 
-@app.route('/type')
+@get('/type')
 def type():
     return EXAMPLE_TYPE_HTML
 
 
-@app.route('/no-body')
+@get('/no-body')
 def no_body():
     return EXAMPLE_NO_BODY_HTML
 
 
-@app.route('/name', methods=['GET'])
+@get('/name')
 def get_name():
     return "My name is: Master Splinter"
 
 
-@app.route('/useragent', methods=['GET'])
+@get('/useragent')
 def get_user_agent():
-    return request.user_agent.string
+    return request.environ.get("HTTP_USER_AGENT")
 
 
-@app.route('/upload', methods=['GET', 'POST'])
+@post('/upload')
+@get('/upload')
 def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         buffer = []
-        buffer.append("Content-type: %s" % f.content_type)
-        buffer.append("File content: %s" % f.stream.read())
-
+        buffer.append("Content-type: %s" % f.type)
+        buffer.append("File content: %s" % f.file.read())
         return '|'.join(buffer)
 
 
-@app.route('/foo')
+@get('/foo')
 def foo():
     return "BAR!"
 
 
-@app.route('/query', methods=['GET'])
+@get('/query')
 def query_string():
     if request.query_string == "model":
         return "query string is valid"
     else:
-        abort(500)
+        raise abort(500)
 
 
-@app.route('/popup')
+@get('/popup')
 def popup():
     return EXAMPLE_POPUP_HTML
 
 
-def start_flask_app(host, port):
+@get('/static/:filename#.*#', name='css')
+def server_static(filename):
+    return static_file(filename, root=path.join(this_folder, 'static'))
+
+
+def start_app(host, port):
     """Runs the server."""
-    app.run(host=host, port=port)
-    app.config['DEBUG'] = False
-    app.config['TESTING'] = False
+    run(host=host, port=port)
+
 
 if __name__ == '__main__':
-    app.run()
+    start_app("localhost", 5000)

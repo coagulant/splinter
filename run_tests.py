@@ -17,7 +17,7 @@ from multiprocessing import Process
 from urllib import urlopen
 
 from tests import TESTS_ROOT
-from tests.fake_webapp import start_flask_app, EXAMPLE_APP
+from tests.fake_webapp import start_app, EXAMPLE_APP
 
 parser = argparse.ArgumentParser('Run splinter tests')
 parser.add_argument('-w', '--which', action='store')
@@ -57,7 +57,7 @@ def wait_until_stop():
 
 def start_server():
     sys.stderr = open('/dev/null', 'w')
-    env.process = Process(target=start_flask_app, args=(env.host, env.port))
+    env.process = Process(target=start_app, args=(env.host, env.port))
     env.process.daemon = True
     env.process.start()
     wait_until_start()
