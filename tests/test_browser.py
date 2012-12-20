@@ -7,13 +7,7 @@
 
 from __future__ import with_statement
 
-import __builtin__
-
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
+import unittest
 import warnings
 
 from splinter.exceptions import DriverNotFoundError
@@ -25,17 +19,17 @@ from fake_webapp import EXAMPLE_APP
 class BrowserTest(unittest.TestCase):
 
     def patch_driver(self, pattern):
-        self.old_import = __builtin__.__import__
+        self.old_import = __builtins__.__import__
 
         def custom_import(name, *args, **kwargs):
             if pattern in name:
                 return None
             return self.old_import(name, *args, **kwargs)
 
-        __builtin__.__import__ = custom_import
+        __builtins__.__import__ = custom_import
 
     def unpatch_driver(self, module):
-        __builtin__.__import__ = self.old_import
+        __builtins__.__import__ = self.old_import
         reload(module)
 
     def browser_can_change_user_agent(self, webdriver):
