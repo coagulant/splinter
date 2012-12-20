@@ -4,9 +4,16 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-import httplib
-from urlparse import urlparse
-from status_code import StatusCode
+try:
+    import httplib
+except ImportError:
+    from http import client as httplib
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib import parse as urlparse
+
+from splinter.request_handler.status_code import StatusCode
 
 
 class RequestHandler(object):
