@@ -1,4 +1,4 @@
-# Copyright 2012 splinter authors. All rights reserved.
+# Copyright 2013 splinter authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
@@ -7,39 +7,14 @@ all: test
 clean:
 	@find . -name "*.pyc" -delete
 
-doc_dependencies: sphinx
+doc_dependencies:
+	@pip install -r doc-requirements.txt --use-mirrors
 
-dependencies: unittest2 argparse coverage selenium bottle lxml zopetestbrowser
+dependencies:
+	@pip install -r test-requirements.txt --use-mirrors
 
 doc: doc_dependencies
 	@cd docs && make clean && make html
-
-argparse:
-	@python -c 'import argparse' 2>/dev/null || pip install argparse --use-mirrors
-
-cssselect:
-	@python -c 'import cssselect' 2>/dev/null || pip install cssselect>=0.7.1 --use-mirrors
-
-coverage:
-	@python -c 'import coverage' 2>/dev/null || pip install coverage==3.5.1 --use-mirrors
-
-selenium:
-	@python -c 'import selenium' 2>/dev/null || pip install selenium==2.28.0 --use-mirrors
-
-unittest2:
-	@python -c 'from unittest import skip' 2>/dev/null || pip install unittest2 --use-mirrors
-
-bottle:
-	@python -c 'import bottle' 2>/dev/null || pip install bottle --use-mirrors
-
-lxml:
-	@python -c 'import lxml' 2>/dev/null || pip install lxml>=3.1beta1 --use-mirrors
-
-sphinx:
-	@python -c 'import sphinx' 2>/dev/null || pip install sphinx==1.1.3 --use-mirrors
-
-zopetestbrowser:
-	@python -c 'import zope.testbrowser' 2>/dev/null || pip install zope.testbrowser==4.0.2 --use-mirrors
 
 release:
 	@sed -ic -e s/`cat VERSION`/$(version)/ setup.py docs/conf.py splinter/__init__.py
@@ -55,6 +30,8 @@ which = 'tests'
 
 test: dependencies clean
 	@echo "Running all tests..."
-	@coverage run run_tests.py -w $(which)
-	@coverage report
-	@echo
+	./run_tests.py -w $(which)
+
+coverage: dependencies clean
+	@echo "Running all tests with coverage..."
+	@coverage run run_tests.py -w $(which) && coverage report

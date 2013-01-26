@@ -11,7 +11,6 @@ from element_does_not_exist import ElementDoestNotExistTest
 from fake_webapp import EXAMPLE_APP
 from find_elements import FindElementsTest
 from form_elements import FormElementsTest
-from within import WithinTest
 from iframes import IFrameElementsTest
 from element import ElementTest
 from is_element_present import IsElementPresentTest
@@ -22,7 +21,7 @@ from type import SlowlyTypeTest
 from popups import PopupWindowsTest
 
 
-class BaseBrowserTests(ElementTest, FindElementsTest, FormElementsTest, ClickElementsTest, CookiesTest, SlowlyTypeTest, WithinTest):
+class BaseBrowserTests(ElementTest, FindElementsTest, FormElementsTest, ClickElementsTest, CookiesTest, SlowlyTypeTest, IsTextPresentTest):
 
     def setUp(self):
         self.fail("You should set up your browser in the setUp() method")
@@ -87,7 +86,7 @@ class BaseBrowserTests(ElementTest, FindElementsTest, FormElementsTest, ClickEle
         self.assertEqual(self.browser, element.parent)
 
 
-class WebDriverTests(BaseBrowserTests, IFrameElementsTest, ElementDoestNotExistTest, IsElementPresentTest, AsyncFinderTests, IsTextPresentTest, StatusCodeTest, MouseInteractionTest, PopupWindowsTest):
+class WebDriverTests(BaseBrowserTests, IFrameElementsTest, ElementDoestNotExistTest, IsElementPresentTest, AsyncFinderTests, StatusCodeTest, MouseInteractionTest, PopupWindowsTest):
 
     def test_can_execute_javascript(self):
         "should be able to execute javascript"

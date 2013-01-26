@@ -9,12 +9,14 @@ import re
 from lxml.cssselect import CSSSelector
 from zope.testbrowser.browser import Browser
 from splinter.element_list import ElementList
+from splinter.exceptions import ElementDoesNotExist
 from splinter.driver import DriverAPI, ElementAPI
 from splinter.cookie_manager import CookieManagerAPI
 
 import mimetypes
 import lxml.html
 import mechanize
+import time
 
 
 class CookieManager(CookieManagerAPI):
@@ -204,6 +206,34 @@ class ZopeTestBrowser(DriverAPI):
 
     def select(self, name, value):
         self.find_by_name(name).first._control.value = [value]
+
+    def is_text_present(self, text, wait_time=None):
+        wait_time = wait_time or 2
+        end_time = time.time() + wait_time
+
+        while time.time() < end_time:
+            if self._is_text_present(text):
+                return True
+        return False
+
+    def _is_text_present(self, text):
+        try:
+            body = self.find_by_tag('body').first
+            return text in body.text
+        except ElementDoesNotExist:
+            # This exception will be thrown if the body tag isn't present
+            # This has occasionally been observed. Assume that the
+            # page isn't fully loaded yet
+            return False
+
+    def is_text_not_present(self, text, wait_time=None):
+        wait_time = wait_time or 2
+        end_time = time.time() + wait_time
+
+        while time.time() < end_time:
+            if not self._is_text_present(text):
+                return True
+        return False
 
     def _element_is_link(self, element):
         return element.tag == 'a'

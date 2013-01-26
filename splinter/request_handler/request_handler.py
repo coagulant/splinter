@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2012 splinter authors. All rights reserved.
+# Copyright 2013 splinter authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
@@ -19,7 +19,7 @@ from splinter.request_handler.status_code import StatusCode
 class RequestHandler(object):
 
     def connect(self, url):
-        if url.startswith("http://"):
+        if not url.startswith("file:"):
             self.request_url = url
             self._create_connection()
             self._store_response()
@@ -44,7 +44,9 @@ class RequestHandler(object):
     def _create_connection(self):
         self._parse_url()
         self.conn = httplib.HTTPConnection(self.host, self.port)
-        self.conn.request('GET', self.path)
+        self.conn.putrequest('GET', self.path)
+        self.conn.putheader('User-agent', 'python/splinter')
+        self.conn.endheaders()
 
     def _parse_url(self):
         parsed_url = urlparse(self.request_url)
